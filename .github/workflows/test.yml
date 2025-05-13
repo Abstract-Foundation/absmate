@@ -16,6 +16,9 @@ jobs:
         zksync:
           - true
           - false
+        rpc-url:
+          - https://api.testnet.abs.xyz
+          - https://api.mainnet.abs.xyz
 
     name: Foundry project
     runs-on: ubuntu-latest
@@ -43,6 +46,8 @@ jobs:
 
       - name: Run Forge tests
         if: ${{ matrix.zksync }}
+        env:
+          RPC_URL: ${{ matrix.rpc-url }}
         run: |
           forge test -vvv ${{ matrix.zksync && '--zksync' || '' }}
         id: test
