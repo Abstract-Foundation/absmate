@@ -21,7 +21,7 @@ jobs:
           submodules: recursive
 
       - name: Install Foundry
-        uses: abstract-foundation/foundry-zksync-toolchain@v1
+        uses: abstract-foundation/foundry-toolchain-zksync@v1
 
       - name: Show Forge version
         run: |
