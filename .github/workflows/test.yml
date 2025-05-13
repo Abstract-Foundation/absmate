@@ -42,6 +42,7 @@ jobs:
         id: build
 
       - name: Run Forge tests
+        if: ${{ matrix.zksync }}
         run: |
           forge test -vvv ${{ matrix.zksync && '--zksync' || '' }}
         id: test
