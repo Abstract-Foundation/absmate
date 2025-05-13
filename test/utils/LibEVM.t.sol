@@ -7,7 +7,7 @@ import {LibEVM} from "../../src/utils/LibEVM.sol";
 contract LibEVMTest is TestBase {
     address public seaport1_6 = 0x0000000000000068F116a894984e2DB1123eB395;
     address public eoa = 0x6f6426a9b93a7567fCCcBfE5d0d6F26c1085999b;
-    address public zkContract = 0xc4FaD9826681f1979c5EE03EF81404bfaaC9F201;
+    address public zkContract = 0x9B947df68D35281C972511B3E7BC875926f26C1A;
 
     function setUp() public {
         initFork();
