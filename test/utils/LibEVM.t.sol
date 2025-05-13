@@ -10,12 +10,7 @@ contract LibEVMTest is TestBase {
     address public zkContract = 0xc4FaD9826681f1979c5EE03EF81404bfaaC9F201;
 
     function setUp() public {
-        string memory rpcUrl = vm.envString("RPC_URL");
-        if (bytes(rpcUrl).length == 0) {
-            vm.createSelectFork("https://api.testnet.abs.xyz");
-        } else {
-            vm.createSelectFork(rpcUrl);
-        }
+        initFork();
     }
 
     function test_isEVMCompatibleAddress_seaport1_6() public view {

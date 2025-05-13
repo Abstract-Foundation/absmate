@@ -6,12 +6,7 @@ import {LibAGW} from "../../src/utils/LibAGW.sol";
 
 contract LibAGWTest is TestBase {
     function setUp() public {
-        string memory rpcUrl = vm.envString("RPC_URL");
-        if (bytes(rpcUrl).length == 0) {
-            vm.createSelectFork("https://api.testnet.abs.xyz");
-        } else {
-            vm.createSelectFork(rpcUrl);
-        }
+        initFork();
     }
 
     function test_isAGWContract_true() public view {
