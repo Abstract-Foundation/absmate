@@ -12,6 +12,10 @@ jobs:
   check:
     strategy:
       fail-fast: true
+      matrix:
+        zksync:
+          - true
+          - false
 
     name: Foundry project
     runs-on: ubuntu-latest
@@ -34,10 +38,10 @@ jobs:
 
       - name: Run Forge build
         run: |
-          forge build --sizes
+          forge build ${{ matrix.zksync && '--zksync' || '--sizes' }}
         id: build
 
       - name: Run Forge tests
         run: |
-          forge test -vvv
+          forge test -vvv ${{ matrix.zksync && '--zksync' || '' }}
         id: test
