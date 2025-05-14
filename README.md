@@ -11,6 +11,12 @@ To install with [**Foundry**](https://github.com/foundry-rs/foundry):
 forge install abstract-foundation/absmate
 ```
 
+Ensure you include the following in your `foundry.toml` as some libraries may require system contract calls.
+```toml
+[profile.default.zksync]
+enable_eravm_extensions = true
+```
+
 ## Contracts
 
 The Solidity smart contracts are located in the `src` directory.
@@ -35,9 +41,3 @@ This is **experimental software** and is provided on an "as is" and "as availabl
 We **do not give any warranties** and **will not be liable for any loss** incurred through any use of this codebase.
 
 Please always include your own thorough tests when using absmate to make sure it works correctly with your code.
-
-Ensure you include the following in your `foundry.toml` as some libraries may require system contract calls.
-```toml
-[profile.default.zksync]
-enable_eravm_extensions = true
-```
