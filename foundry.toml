@@ -2,6 +2,8 @@
 src = "src"
 out = "out"
 libs = ["lib"]
-is_system = true
+
+[profile.default.zksync]
+enable_eravm_extensions = true
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
