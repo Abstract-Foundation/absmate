@@ -19,7 +19,7 @@ The Solidity smart contracts are located in the `src` directory.
 utils
 ├─ LibAGW - "Utilities for AGW smart accounts"
 ├─ LibClone — "Clones for ZKsync"
-└─  LibEVM — "Detection of EVM bytecode contracts"
+└─ LibEVM — "Detection of EVM bytecode contracts"
 ```
 
 ## Contributing
