@@ -1,6 +1,6 @@
-## absmate
+# <img src="logo.svg" alt="solady" height="180"/>
 
-A collection of helpful utilities for building contracts on Abstract
+A collection of helpful utilities for building contracts on [Abstract](https://abs.xyz)
 
 ## Installation
 
