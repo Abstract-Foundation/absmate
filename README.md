@@ -17,6 +17,8 @@ Ensure you include the following in your `foundry.toml` as some libraries may re
 enable_eravm_extensions = true
 ```
 
+Add `absmate/=lib/absmate/` to your `remappings.txt`.
+
 ## Contracts
 
 The Solidity smart contracts are located in the `src` directory.
