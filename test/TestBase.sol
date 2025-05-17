@@ -2,8 +2,9 @@
 pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
+import {TestExt} from "forge-zksync-std/TestExt.sol";
 
-contract TestBase is Test {
+contract TestBase is Test, TestExt {
     string public constant DEFAULT_RPC_URL = "https://api.testnet.abs.xyz";
 
     function initFork() internal {

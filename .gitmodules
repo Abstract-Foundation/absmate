@@ -5,3 +5,6 @@
 	path = lib/v2-testnet-contracts
 	url = https://github.com/matter-labs/v2-testnet-contracts
 	branch = beta
+[submodule "lib/forge-zksync-std"]
+	path = lib/forge-zksync-std
+	url = https://github.com/Moonsong-Labs/forge-zksync-std
