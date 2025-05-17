@@ -13,9 +13,9 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        zksync:
-          - true
-          - false
+        mode:
+          - zksync
+          - evm
         chain:
           - testnet
           - mainnet
@@ -41,13 +41,13 @@ jobs:
 
       - name: Run Forge build
         run: |
-          forge build ${{ matrix.zksync && '--zksync' || '--sizes' }}
+          forge build ${{ matrix.mode == 'zksync' && '--zksync' || '--sizes' }}
         id: build
 
       - name: Run Forge tests
-        if: ${{ matrix.zksync }}
+        if: ${{ matrix.mode == 'zksync' }}
         env:
           RPC_URL: ${{ matrix.chain == 'testnet' && 'https://api.testnet.abs.xyz' || 'https://api.mainnet.abs.xyz' }}
         run: |
-          forge test -vvv ${{ matrix.zksync && '--zksync' || '' }}
+          forge test -vvv ${{ matrix.mode == 'zksync' && '--zksync' || '' }}
         id: test
