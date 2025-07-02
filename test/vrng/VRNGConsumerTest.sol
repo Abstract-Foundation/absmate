@@ -30,7 +30,7 @@ contract VRNGConsumerTest is TestBase {
         vrngConsumerMostEfficient.setVRNG(address(vrngSystem));
     }
 
-    function test_uninitializedVrfRevertsOnRequest() public {
+    function test_uninitializedVrngRevertsOnRequest() public {
         // uninitialize the vrng system
         vrngConsumer.setVRNG(address(0));
 
@@ -38,13 +38,13 @@ contract VRNGConsumerTest is TestBase {
         vrngConsumer.triggerRandomNumberRequest();
     }
 
-    function test_requestRandomNumberCallsVrfSystem() public {
+    function test_requestRandomNumberCallsVrngSystem() public {
         assertEq(vrngSystem.nextRequestId(), 1);
         vrngConsumer.triggerRandomNumberRequest();
         assertEq(vrngSystem.nextRequestId(), 2);
     }
 
-    function testFuzz_fullfillRandomRequestNotFromVrfSystemReverts(address sender, uint256 randomNumber) public {
+    function testFuzz_fullfillRandomRequestNotFromVrngSystemReverts(address sender, uint256 randomNumber) public {
         vm.assume(sender != address(vrngSystem));
         vrngConsumer.triggerRandomNumberRequest();
 
@@ -73,7 +73,7 @@ contract VRNGConsumerTest is TestBase {
         vrngConsumer.randomNumberCallback(requestId, randomNumber2);
     }
 
-    function test_duplicateRequestIdFromVrfSystemReverts() public {
+    function test_duplicateRequestIdFromVrngSystemReverts() public {
         uint256 requestId = vrngSystem.nextRequestId();
 
         vrngConsumer.triggerRandomNumberRequest();
