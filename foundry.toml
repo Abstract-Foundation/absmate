@@ -8,4 +8,8 @@ no_match_contract = "(LibAGWTest|LibEVMTest)"
 [profile.default.zksync]
 enable_eravm_extensions = true
 
+[profile.zksync]
+# use to unset the no_match_contract from default profile
+no_match_contract = "_"
+
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
