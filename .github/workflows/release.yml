@@ -34,7 +34,12 @@ jobs:
         run: |
           forge build --zksync
         id: build-zksync
-
-      - name: Soldeer Push
+    
+      - name: Publish to soldeer.xyz
+        env:
+          SOLDEER_EMAIL: ${{ secrets.SOLDEER_EMAIL }}
+          SOLDEER_PASSWORD: ${{ secrets.SOLDEER_PASSWORD }}
         run: |
-          forge soldeer push --dry-run absmate~`echo ${{ github.ref_name }} | sed 's/v//'`
+          forge soldeer login --email "$SOLDEER_EMAIL" --password "$SOLDEER_PASSWORD"
+          VERSION=`echo ${{ github.ref_name }} | sed 's/v//'`
+          forge soldeer push absmate~$VERSION
