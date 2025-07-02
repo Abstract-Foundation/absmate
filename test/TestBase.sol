@@ -11,8 +11,4 @@ contract TestBase is Test, TestExt {
         string memory rpcUrl = vm.envOr("RPC_URL", DEFAULT_RPC_URL);
         vm.createSelectFork(rpcUrl);
     }
-
-    function test_base() public pure {
-        assertEq(uint256(1), 1);
-    }
 }
