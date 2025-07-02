@@ -45,7 +45,6 @@ jobs:
         id: build
 
       - name: Run Forge tests
-        if: ${{ matrix.mode == 'zksync' }}
         env:
           RPC_URL: ${{ matrix.chain == 'testnet' && secrets.TESTNET_RPC_URL || secrets.MAINNET_RPC_URL }}
         run: |
