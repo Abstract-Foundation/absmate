@@ -7,7 +7,7 @@ import {VRFNormalizationMethod} from "./DataTypes.sol";
 
 /// @title VRFConsumer
 /// @author Abstract (https://github.com/Abstract-Foundation/absmate/blob/main/src/utils/VRFConsumer.sol)
-/// @notice A simple VRF consumer contract for requesting randomness from Proof of Play VRF.
+/// @notice A simple consumer contract for requesting randomness from Proof of Play vRNG. (https://docs.proofofplay.com/services/vrng/about)
 /// @dev Must initialize via `_setVrf` function before requesting randomness.
 abstract contract VRFConsumer is VRFConsumerAdvanced {
     constructor() VRFConsumerAdvanced(VRFNormalizationMethod.BALANCED) {}

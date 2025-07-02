@@ -27,13 +27,13 @@ utils
 ├─ LibClone — "Clones for ZKsync"
 ├─ LibEVM — "Detection of EVM bytecode contracts"
 └─ vrf
-   ├─ DataTypes - "Data structures for VRF operations"
-   ├─ Errors - "Custom error definitions for VRF"
-   ├─ VRFConsumer - "Basic VRF consumer contract"
-   └─ VRFConsumerAdvanced - "Advanced VRF consumer with custom normalization"
+   ├─ DataTypes - "Data structures for vRNG operations"
+   ├─ Errors - "Custom error definitions for vRNG consumers"
+   ├─ VRFConsumer - "Basic random number consumer contract"
+   └─ VRFConsumerAdvanced - "Advanced random number consumer with custom normalization"
 ```
 > [!NOTE]
-> Using VRF contracts requires a subscription to [Proof of Play VRF](https://docs.proofofplay.com/proof-of-play/vrf/introduction). Make sure you have an active subscription before implementing VRF functionality.
+> Using `vrf` contracts requires a subscription to [Proof of Play vRNG](https://docs.proofofplay.com/introduction). Make sure you have an active subscription before implementing vRNG functionality.
 
 
 ## Contributing

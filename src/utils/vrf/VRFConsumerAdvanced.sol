@@ -8,7 +8,7 @@ import "./Errors.sol";
 
 /// @title VRFConsumerAdvanced
 /// @author Abstract (https://github.com/Abstract-Foundation/absmate/blob/main/src/utils/VRFConsumerAdvanced.sol)
-/// @notice A VRF consumer contract for requesting randomness from Proof of Play VRF.
+/// @notice A consumer contract for requesting randomness from Proof of Play vRNG. (https://docs.proofofplay.com/services/vrng/about)
 /// @dev Allows configuration of the randomness normalization method to one of three presets.
 ///      Must initialize via `_setVrf` function before requesting randomness.
 abstract contract VRFConsumerAdvanced is IVRFSystemCallback {
