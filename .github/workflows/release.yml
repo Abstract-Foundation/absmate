@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  release:
+    types: [created]
+
+env:
+  FOUNDRY_PROFILE: ci
+
+jobs:
+  package:
+
+    name: Soldeer Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: abstract-foundation/foundry-toolchain-zksync@v1
+
+      - name: Run Forge fmt
+        run: |
+          forge fmt --check
+        id: fmt
+
+      - name: Run Forge build
+        run: |
+          forge build
+        id: build
+
+      - name: Run Forge build zksync
+        run: |
+          forge build --zksync
+        id: build-zksync
+
+      - name: Soldeer Push
+        run: |
+          forge soldeer push --dry-run absmate~`echo ${{ github.ref_name }} | sed 's/v//'`
