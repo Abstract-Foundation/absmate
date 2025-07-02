@@ -3,4 +3,4 @@ erc4626-tests/=lib/v2-testnet-contracts/lib/openzeppelin-contracts/lib/erc4626-t
 forge-std/=lib/forge-std/src/
 halmos-cheatcodes/=lib/v2-testnet-contracts/lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/
 openzeppelin-contracts/=lib/v2-testnet-contracts/lib/openzeppelin-contracts/
-era-contracts/=lib/v2-testnet-contracts/contracts/
+era-contracts/=lib/era-contracts/
