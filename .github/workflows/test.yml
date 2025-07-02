@@ -52,5 +52,6 @@ jobs:
         env:
           RPC_URL: ${{ matrix.chain == 'testnet' && secrets.TESTNET_RPC_URL || secrets.MAINNET_RPC_URL }}
         run: |
+          FOUNDRY_PROFILE=${{ matrix.mode == 'zksync' && 'zksync' || env.FOUNDRY_PROFILE }}
           forge test -vvv ${{ matrix.mode == 'zksync' && '--zksync' || '' }}
         id: test
