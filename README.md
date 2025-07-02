@@ -26,14 +26,14 @@ utils
 ├─ LibAGW - "Utilities for AGW smart accounts"
 ├─ LibClone — "Clones for ZKsync"
 ├─ LibEVM — "Detection of EVM bytecode contracts"
-└─ vrf
+└─ vrng
    ├─ DataTypes - "Data structures for vRNG operations"
    ├─ Errors - "Custom error definitions for vRNG consumers"
-   ├─ VRFConsumer - "Basic random number consumer contract"
-   └─ VRFConsumerAdvanced - "Advanced random number consumer with custom normalization"
+   ├─ VRNGConsumer - "Basic random number consumer contract"
+   └─ VRNGConsumerAdvanced - "Advanced random number consumer with custom normalization"
 ```
 > [!NOTE]
-> Using `vrf` contracts requires a subscription to [Proof of Play vRNG](https://docs.proofofplay.com/introduction). Make sure you have an active subscription before implementing vRNG functionality.
+> Using `vrng` contracts requires a subscription to [Proof of Play vRNG](https://docs.proofofplay.com/introduction). Make sure you have an active subscription before implementing vRNG functionality.
 
 
 ## Contributing

@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-interface IVRFSystemCallback {
+interface IVRNGSystemCallback {
     event RandomNumberRequested(uint256 indexed requestId);
     event RandomNumberFulfilled(uint256 indexed requestId, uint256 normalizedRandomNumber);
 

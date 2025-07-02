@@ -1,68 +1,68 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.26;
 
-import {IVRFSystemCallback} from "../../interfaces/vrf/IVRFSystemCallback.sol";
-import {IVRFSystem} from "../../interfaces/vrf/IVRFSystem.sol";
+import {IVRNGSystemCallback} from "../../interfaces/vrng/IVRNGSystemCallback.sol";
+import {IVRNGSystem} from "../../interfaces/vrng/IVRNGSystem.sol";
 import "./DataTypes.sol";
 import "./Errors.sol";
 
-/// @title VRFConsumerAdvanced
-/// @author Abstract (https://github.com/Abstract-Foundation/absmate/blob/main/src/utils/VRFConsumerAdvanced.sol)
+/// @title VRNGConsumerAdvanced
+/// @author Abstract (https://github.com/Abstract-Foundation/absmate/blob/main/src/utils/VRNGConsumerAdvanced.sol)
 /// @notice A consumer contract for requesting randomness from Proof of Play vRNG. (https://docs.proofofplay.com/services/vrng/about)
 /// @dev Allows configuration of the randomness normalization method to one of three presets.
-///      Must initialize via `_setVrf` function before requesting randomness.
-abstract contract VRFConsumerAdvanced is IVRFSystemCallback {
-    // keccak256(abi.encode(uint256(keccak256("absmate.vrf.consumer.storage")) - 1)) & ~bytes32(uint256(0xff))
-    bytes32 private constant VRF_STORAGE_LOCATION = 0xa2e33039c2b06aa64552c3b67ad94d03188260355f4bb3d7095983e910872300;
+///      Must initialize via `_setVRNG` function before requesting randomness.
+abstract contract VRNGConsumerAdvanced is IVRNGSystemCallback {
+    // keccak256(abi.encode(uint256(keccak256("absmate.vrng.consumer.storage")) - 1)) & ~bytes32(uint256(0xff))
+    bytes32 private constant VRNG_STORAGE_LOCATION = 0xfc4de942100e62e9eb61034c75124e3689e7605ae081e19c59907d5c442ea700;
 
     /// @dev The function used to normalize the drand random number
     function(uint256,uint256) internal returns(uint256) internal immutable _normalizeRandomNumber;
 
-    struct VRFConsumerStorage {
-        IVRFSystem vrf;
-        mapping(uint256 requestId => VRFRequest details) requests;
+    struct VRNGConsumerStorage {
+        IVRNGSystem vrng;
+        mapping(uint256 requestId => VRNGRequest details) requests;
     }
 
-    /// @notice The VRF system contract address
-    IVRFSystem public immutable vrf;
+    /// @notice The VRNG system contract address
+    IVRNGSystem public immutable vrng;
 
-    /// @dev Create a new VRF consumer with the specified normalization method.
-    /// @param normalizationMethod The normalization method to use. See `VRFNormalizationMethod` for more details.
-    constructor(VRFNormalizationMethod normalizationMethod) {
-        if (normalizationMethod == VRFNormalizationMethod.MOST_EFFICIENT) {
+    /// @dev Create a new VRNG consumer with the specified normalization method.
+    /// @param normalizationMethod The normalization method to use. See `VRNGNormalizationMethod` for more details.
+    constructor(VRNGNormalizationMethod normalizationMethod) {
+        if (normalizationMethod == VRNGNormalizationMethod.MOST_EFFICIENT) {
             _normalizeRandomNumber = _normalizeRandomNumberHyperEfficient;
-        } else if (normalizationMethod == VRFNormalizationMethod.BALANCED) {
+        } else if (normalizationMethod == VRNGNormalizationMethod.BALANCED) {
             _normalizeRandomNumber = _normalizeRandomNumberHashWithRequestId;
-        } else if (normalizationMethod == VRFNormalizationMethod.MOST_NORMALIZED) {
+        } else if (normalizationMethod == VRNGNormalizationMethod.MOST_NORMALIZED) {
             _normalizeRandomNumber = _normalizeRandomNumberMostNormalized;
         }
     }
 
-    /// @notice Callback for VRF system. Not user callable.
-    /// @dev Callback function for the VRF system, normalizes the random number and calls the
+    /// @notice Callback for VRNG system. Not user callable.
+    /// @dev Callback function for the VRNG system, normalizes the random number and calls the
     ///      _onRandomNumberFulfilled function with the normalized randomness
     /// @param requestId The request ID
     /// @param randomNumber The random number
     function randomNumberCallback(uint256 requestId, uint256 randomNumber) external {
-        VRFConsumerStorage storage $ = _getVRFStorage();
-        require(msg.sender == address($.vrf), VRFConsumer__OnlyVRFSystem());
+        VRNGConsumerStorage storage $ = _getVRNGStorage();
+        require(msg.sender == address($.vrng), VRNGConsumer__OnlyVRNGSystem());
 
-        VRFRequest memory request = $.requests[requestId];
-        require(request.status == VRFStatus.REQUESTED, VRFConsumer__InvalidFulfillment());
+        VRNGRequest memory request = $.requests[requestId];
+        require(request.status == VRNGStatus.REQUESTED, VRNGConsumer__InvalidFulfillment());
         uint256 normalizedRandomNumber = _normalizeRandomNumber(randomNumber, requestId);
 
-        $.requests[requestId] = VRFRequest({status: VRFStatus.FULFILLED, randomNumber: normalizedRandomNumber});
+        $.requests[requestId] = VRNGRequest({status: VRNGStatus.FULFILLED, randomNumber: normalizedRandomNumber});
 
         emit RandomNumberFulfilled(requestId, normalizedRandomNumber);
 
         _onRandomNumberFulfilled(requestId, normalizedRandomNumber);
     }
 
-    /// @dev Set the VRF system contract address. Must be initialized before requesting randomness.
-    /// @param _vrf The VRF system contract address
-    function _setVrf(address _vrf) internal {
-        VRFConsumerStorage storage $ = _getVRFStorage();
-        $.vrf = IVRFSystem(_vrf);
+    /// @dev Set the VRNG system contract address. Must be initialized before requesting randomness.
+    /// @param _vrng The VRNG system contract address
+    function _setVRNG(address _vrng) internal {
+        VRNGConsumerStorage storage $ = _getVRNGStorage();
+        $.vrng = IVRNGSystem(_vrng);
     }
 
     /// @dev Request a random number. Guards against duplicate requests.
@@ -75,39 +75,39 @@ abstract contract VRFConsumerAdvanced is IVRFSystemCallback {
     /// @param traceId The trace ID
     /// @return requestId The request ID
     function _requestRandomNumber(uint256 traceId) internal returns (uint256) {
-        VRFConsumerStorage storage $ = _getVRFStorage();
+        VRNGConsumerStorage storage $ = _getVRNGStorage();
 
-        if (address($.vrf) == address(0)) {
-            revert VRFConsumer__NotInitialized();
+        if (address($.vrng) == address(0)) {
+            revert VRNGConsumer__NotInitialized();
         }
 
-        uint256 requestId = $.vrf.requestRandomNumberWithTraceId(traceId);
+        uint256 requestId = $.vrng.requestRandomNumberWithTraceId(traceId);
 
-        VRFRequest storage request = $.requests[requestId];
-        require(request.status == VRFStatus.NONE, VRFConsumer__InvalidRequestId());
-        request.status = VRFStatus.REQUESTED;
+        VRNGRequest storage request = $.requests[requestId];
+        require(request.status == VRNGStatus.NONE, VRNGConsumer__InvalidRequestId());
+        request.status = VRNGStatus.REQUESTED;
 
         emit RandomNumberRequested(requestId);
 
         return requestId;
     }
 
-    /// @dev Callback function for the VRF system. Override to handle randomness.
+    /// @dev Callback function for the VRNG system. Override to handle randomness.
     /// @param requestId The request ID
     /// @param randomNumber The random number
     function _onRandomNumberFulfilled(uint256 requestId, uint256 randomNumber) internal virtual;
 
-    /// @dev Get the VRF request details for a given request ID
+    /// @dev Get the VRNG request details for a given request ID
     /// @param requestId The request ID
-    /// @return result The VRF result
-    function _getVrfRequest(uint256 requestId) internal view returns (VRFRequest memory) {
-        VRFConsumerStorage storage $ = _getVRFStorage();
+    /// @return result The VRNG result
+    function _getVRNGRequest(uint256 requestId) internal view returns (VRNGRequest memory) {
+        VRNGConsumerStorage storage $ = _getVRNGStorage();
         return $.requests[requestId];
     }
 
-    function _getVRFStorage() private pure returns (VRFConsumerStorage storage $) {
+    function _getVRNGStorage() private pure returns (VRNGConsumerStorage storage $) {
         assembly {
-            $.slot := VRF_STORAGE_LOCATION
+            $.slot := VRNG_STORAGE_LOCATION
         }
     }
 

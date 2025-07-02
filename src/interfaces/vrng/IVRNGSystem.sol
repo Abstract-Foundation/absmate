@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.0;
 
-interface IVRFSystem {
+interface IVRNGSystem {
     /**
-     * Starts a VRF random number request
+     * Starts a VRNG random number request
      *
      * @param traceId Optional Id to use when tracing the request
      * @return requestId for the random number, will be passed to the callback contract
