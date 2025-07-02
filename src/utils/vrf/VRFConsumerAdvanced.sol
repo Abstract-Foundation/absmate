@@ -3,7 +3,8 @@ pragma solidity ^0.8.26;
 
 import {IVRFSystemCallback} from "../../interfaces/vrf/IVRFSystemCallback.sol";
 import {IVRFSystem} from "../../interfaces/vrf/IVRFSystem.sol";
-import {VRFResult, VRFStatus, VRFNormalizationMethod} from "./DataTypes.sol";
+import "./DataTypes.sol";
+import "./Errors.sol";
 
 /// @title VRFConsumerAdvanced
 /// @author Abstract (https://github.com/Abstract-Foundation/absmate/blob/main/src/utils/VRFConsumerAdvanced.sol)
@@ -19,19 +20,14 @@ abstract contract VRFConsumerAdvanced is IVRFSystemCallback {
 
     struct VRFConsumerStorage {
         IVRFSystem vrf;
-        mapping(uint256 requestId => VRFResult result) results;
+        mapping(uint256 requestId => VRFRequest details) requests;
     }
 
     /// @notice The VRF system contract address
     IVRFSystem public immutable vrf;
 
-    error NotInitialized();
-    error UnsupportedChain();
-    error InvalidFulfillment();
-    error InvalidRequest();
-    error OnlyVRFSystem();
-    error UnsupportedNormalizationMethod();
-
+    /// @dev Create a new VRF consumer with the specified normalization method.
+    /// @param normalizationMethod The normalization method to use. See `VRFNormalizationMethod` for more details.
     constructor(VRFNormalizationMethod normalizationMethod) {
         if (normalizationMethod == VRFNormalizationMethod.MOST_EFFICIENT) {
             _normalizeRandomNumber = _normalizeRandomNumberHyperEfficient;
@@ -39,8 +35,6 @@ abstract contract VRFConsumerAdvanced is IVRFSystemCallback {
             _normalizeRandomNumber = _normalizeRandomNumberHashWithRequestId;
         } else if (normalizationMethod == VRFNormalizationMethod.MOST_NORMALIZED) {
             _normalizeRandomNumber = _normalizeRandomNumberMostNormalized;
-        } else {
-            revert UnsupportedNormalizationMethod();
         }
     }
 
@@ -51,13 +45,15 @@ abstract contract VRFConsumerAdvanced is IVRFSystemCallback {
     /// @param randomNumber The random number
     function randomNumberCallback(uint256 requestId, uint256 randomNumber) external {
         VRFConsumerStorage storage $ = _getVRFStorage();
-        require(msg.sender == address($.vrf), OnlyVRFSystem());
+        require(msg.sender == address($.vrf), VRFConsumer__OnlyVRFSystem());
 
-        VRFResult memory result = $.results[requestId];
-        require(result.status == VRFStatus.REQUESTED, InvalidFulfillment());
+        VRFRequest memory request = $.requests[requestId];
+        require(request.status == VRFStatus.REQUESTED, VRFConsumer__InvalidFulfillment());
         uint256 normalizedRandomNumber = _normalizeRandomNumber(randomNumber, requestId);
 
-        $.results[requestId] = VRFResult({status: VRFStatus.FULFILLED, randomNumber: normalizedRandomNumber});
+        $.requests[requestId] = VRFRequest({status: VRFStatus.FULFILLED, randomNumber: normalizedRandomNumber});
+
+        emit RandomNumberFulfilled(requestId, normalizedRandomNumber);
 
         _onRandomNumberFulfilled(requestId, normalizedRandomNumber);
     }
@@ -82,14 +78,17 @@ abstract contract VRFConsumerAdvanced is IVRFSystemCallback {
         VRFConsumerStorage storage $ = _getVRFStorage();
 
         if (address($.vrf) == address(0)) {
-            revert NotInitialized();
+            revert VRFConsumer__NotInitialized();
         }
 
         uint256 requestId = $.vrf.requestRandomNumberWithTraceId(traceId);
 
-        VRFResult storage result = $.results[requestId];
-        require(result.status == VRFStatus.NONE, InvalidRequest());
-        result.status = VRFStatus.REQUESTED;
+        VRFRequest storage request = $.requests[requestId];
+        require(request.status == VRFStatus.NONE, VRFConsumer__InvalidRequestId());
+        request.status = VRFStatus.REQUESTED;
+
+        emit RandomNumberRequested(requestId);
+
         return requestId;
     }
 
@@ -98,12 +97,12 @@ abstract contract VRFConsumerAdvanced is IVRFSystemCallback {
     /// @param randomNumber The random number
     function _onRandomNumberFulfilled(uint256 requestId, uint256 randomNumber) internal virtual;
 
-    /// @dev Get the VRF result for a given request ID
+    /// @dev Get the VRF request details for a given request ID
     /// @param requestId The request ID
     /// @return result The VRF result
-    function _getVrfResult(uint256 requestId) internal view returns (VRFResult memory) {
+    function _getVrfRequest(uint256 requestId) internal view returns (VRFRequest memory) {
         VRFConsumerStorage storage $ = _getVRFStorage();
-        return $.results[requestId];
+        return $.requests[requestId];
     }
 
     function _getVRFStorage() private pure returns (VRFConsumerStorage storage $) {
@@ -140,6 +139,8 @@ abstract contract VRFConsumerAdvanced is IVRFSystemCallback {
         view
         returns (uint256)
     {
-        return uint256(keccak256(abi.encodePacked(blockhash(block.number - (requestId % 256)), randomNumber)));
+        unchecked {
+            return uint256(keccak256(abi.encodePacked(blockhash(block.number - (requestId % 256)), randomNumber)));
+        }
     }
 }
