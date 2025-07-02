@@ -2,6 +2,8 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+# These tests can only be run in zksync mode
+no_match_contract = "(LibAGWTest|LibEVMTest)"
 
 [profile.default.zksync]
 enable_eravm_extensions = true
