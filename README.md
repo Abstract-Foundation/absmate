@@ -25,8 +25,16 @@ The Solidity smart contracts are located in the `src` directory.
 utils
 ├─ LibAGW - "Utilities for AGW smart accounts"
 ├─ LibClone — "Clones for ZKsync"
-└─ LibEVM — "Detection of EVM bytecode contracts"
+├─ LibEVM — "Detection of EVM bytecode contracts"
+└─ vrf
+   ├─ DataTypes - "Data structures for VRF operations"
+   ├─ Errors - "Custom error definitions for VRF"
+   ├─ VRFConsumer - "Basic VRF consumer contract"
+   └─ VRFConsumerAdvanced - "Advanced VRF consumer with custom normalization"
 ```
+> [!NOTE]
+> Using VRF contracts requires a subscription to [Proof of Play VRF](https://docs.proofofplay.com/proof-of-play/vrf/introduction). Make sure you have an active subscription before implementing VRF functionality.
+
 
 ## Contributing
 
