@@ -1,1 +1,1 @@
-era-contracts/=lib/v2-testnet-contracts/contracts/
+era-contracts/=lib/zksync-contracts/contracts/
