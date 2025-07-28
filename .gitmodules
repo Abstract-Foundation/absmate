@@ -7,3 +7,6 @@
 [submodule "lib/zksync-contracts"]
 	path = lib/zksync-contracts
 	url = https://github.com/matter-labs/zksync-contracts
+[submodule "lib/solady"]
+	path = lib/solady
+	url = https://github.com/vectorized/solady
