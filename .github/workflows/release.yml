@@ -4,9 +4,6 @@ on:
   release:
     types: [created]
 
-env:
-  FOUNDRY_PROFILE: ci
-
 jobs:
   package:
 
