@@ -16,7 +16,7 @@ abstract contract VRNGConsumerAdvanced is IVRNGSystemCallback {
     bytes32 private constant VRNG_STORAGE_LOCATION = 0xfc4de942100e62e9eb61034c75124e3689e7605ae081e19c59907d5c442ea700;
 
     /// @dev The function used to normalize the drand random number
-    function(uint256,uint256) internal returns(uint256) internal immutable _normalizeRandomNumber;
+    function(uint256, uint256) internal returns (uint256) internal immutable _normalizeRandomNumber;
 
     struct VRNGConsumerStorage {
         IVRNGSystem vrng;
@@ -24,7 +24,9 @@ abstract contract VRNGConsumerAdvanced is IVRNGSystemCallback {
     }
 
     /// @notice The VRNG system contract address
-    IVRNGSystem public immutable vrng;
+    function vrng() public view virtual returns (address) {
+        return address(_getVRNGStorage().vrng);
+    }
 
     /// @dev Create a new VRNG consumer with the specified normalization method.
     /// @param normalizationMethod The normalization method to use. See `VRNGNormalizationMethod` for more details.

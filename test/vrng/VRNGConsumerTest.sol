@@ -30,6 +30,12 @@ contract VRNGConsumerTest is TestBase {
         vrngConsumerMostEfficient.setVRNG(address(vrngSystem));
     }
 
+    function test_vrngGetterReturnsVrngSystem() public view {
+        assertEq(address(vrngConsumer.vrng()), address(vrngSystem));
+        assertEq(address(vrngConsumerMostNormalized.vrng()), address(vrngSystem));
+        assertEq(address(vrngConsumerMostEfficient.vrng()), address(vrngSystem));
+    }
+
     function test_uninitializedVrngRevertsOnRequest() public {
         // uninitialize the vrng system
         vrngConsumer.setVRNG(address(0));
@@ -59,9 +65,7 @@ contract VRNGConsumerTest is TestBase {
         vrngConsumer.randomNumberCallback(requestId, randomNumber);
     }
 
-    function testFuzz_fulfillRandomRequestAlreadyFulfilledReverts(uint256 randomNumber1, uint256 randomNumber2)
-        public
-    {
+    function testFuzz_fulfillRandomRequestAlreadyFulfilledReverts(uint256 randomNumber1, uint256 randomNumber2) public {
         uint256 requestId = vrngSystem.nextRequestId();
         vrngConsumer.triggerRandomNumberRequest();
 
@@ -158,8 +162,9 @@ contract VRNGConsumerTest is TestBase {
     }
 
     function _assemblyCreate(uint8 normalizationMethod) internal returns (address result) {
-        bytes memory code =
-            abi.encodePacked(type(MockVRNGConsumerAdvancedImplementation).creationCode, abi.encode(normalizationMethod));
+        bytes memory code = abi.encodePacked(
+            type(MockVRNGConsumerAdvancedImplementation).creationCode, abi.encode(normalizationMethod)
+        );
 
         // Deploy via assembly to avoid enum revert inside the test code
         assembly {
