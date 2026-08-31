@@ -4,6 +4,12 @@ on:
   release:
     types: [created]
 
+# This workflow only reads the repository; publishing authenticates with the
+# soldeer credentials, not GITHUB_TOKEN. Dropping the token to read-only keeps a
+# compromised build step from pushing commits, tags, or releases.
+permissions:
+  contents: read
+
 jobs:
   package:
 
@@ -36,7 +42,12 @@ jobs:
         env:
           SOLDEER_EMAIL: ${{ secrets.SOLDEER_EMAIL }}
           SOLDEER_PASSWORD: ${{ secrets.SOLDEER_PASSWORD }}
+          # Pass the tag through the environment instead of interpolating
+          # ${{ github.ref_name }} into the script. Tag names may contain shell
+          # metacharacters, which would otherwise execute in a step that holds the
+          # soldeer publish credentials.
+          RELEASE_TAG: ${{ github.ref_name }}
         run: |
           forge soldeer login --email "$SOLDEER_EMAIL" --password "$SOLDEER_PASSWORD"
-          VERSION=`echo ${{ github.ref_name }} | sed 's/v//'`
+          VERSION=`echo "$RELEASE_TAG" | sed 's/v//'`
           forge soldeer push --skip-warnings absmate~$VERSION

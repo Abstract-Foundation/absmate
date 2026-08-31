@@ -9,6 +9,12 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Build and test need read access only. Restricting GITHUB_TOKEN here limits what
+# a malicious dependency or submodule build script could do with the token, which
+# matters because this workflow also runs on pull requests.
+permissions:
+  contents: read
+
 jobs:
   check:
     strategy:
