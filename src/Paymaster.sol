@@ -13,6 +13,7 @@ import {
 /// @author Abstract (https://github.com/Abstract-Foundation/absmate/blob/main/src/Paymaster.sol)
 abstract contract Paymaster is IPaymaster {
     error BootloaderTransferFailed();
+    error NotBootloader();
 
     /// @dev Called by the bootloader to verify that the paymaster agrees to pay for the
     /// fee for the transaction. This transaction should also send the necessary amount of funds onto the bootloader
@@ -30,6 +31,14 @@ abstract contract Paymaster is IPaymaster {
         payable
         returns (bytes4 magic, bytes memory context)
     {
+        // Only the bootloader may drive paymaster validation. Without this check any
+        // caller could invoke this function with an arbitrary `Transaction` struct and
+        // make the paymaster forward `gasLimit * maxFeePerGas` wei to the bootloader
+        // outside of a real fee flow, draining the paymaster's balance.
+        if (msg.sender != BOOTLOADER_FORMAL_ADDRESS) {
+            revert NotBootloader();
+        }
+
         uint256 requiredETH = _transaction.gasLimit * _transaction.maxFeePerGas;
 
         context = _validateTransaction(
